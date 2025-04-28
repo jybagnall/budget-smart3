@@ -2,9 +2,21 @@
 
 import supabase from "./supabase";
 import { auth, signIn, signOut } from "./auth";
+import { redirect } from "next/navigation";
+import { getTargetMonthAfterLogin } from "./data-service";
 
 export async function signInAction() {
-  await signIn("google", { redirectTo: "/set-budget" });
+  await signIn("google", { redirect: false });
+
+  const result = await getTargetMonthAfterLogin();
+
+  if (result.status === "empty") {
+    redirect("/set-budget");
+  } else if (result.status === "single") {
+    redirect("/spent/categories");
+  } else if (result.status === "multiple") {
+    redirect("/month-select");
+  }
 }
 
 export async function signOutAction() {
@@ -65,4 +77,5 @@ export async function setBudget(dateData, data) {
     }
     throw new Error("Budget could not be created");
   }
+  return date_id;
 }

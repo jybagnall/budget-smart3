@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import SaveButton from "@/app/_components/SaveButton";
-import useTargetMonthPicker from "@/app/_components/useTargetMonthPicker";
+import { useMonthContext } from "@/app/_context/dateContext";
 import { setBudget } from "@/app/_services/actions";
 import MonthSelector from "@/app/_components/MonthSelector";
 
@@ -15,19 +15,32 @@ export default function SetBudgetForm() {
     formState: { errors },
   } = useForm();
 
-  const { targetMonth, targetYear, handleMonthChange, isSubmittingPast } =
-    useTargetMonthPicker();
+  const {
+    targetMonth,
+    targetYear,
+    setTargetMonth,
+    setTargetYear,
+    setDateId,
+    handleMonthChange,
+    isSubmittingPast,
+  } = useMonthContext();
 
   const router = useRouter();
 
   const dateData = { targetMonth, targetYear };
+
   const onSubmit = async (data) => {
     if (isSubmittingPast()) {
       toast.error("A budget for a past month or year cannot be set.");
       return;
     }
+
     try {
-      await setBudget(dateData, data);
+      const newDateId = await setBudget(dateData, data);
+      setTargetMonth(dateData.targetMonth);
+      setTargetYear(dateData.targetYear);
+      setDateId(newDateId);
+
       toast.success("Budget set successfully!");
       router.push("/spent/categories");
     } catch (error) {
@@ -81,7 +94,7 @@ export default function SetBudgetForm() {
         )}
       </div>
 
-      <SaveButton bgColor={"bg-sky-200"} />
+      <SaveButton bgColor={"bg-stone-100"} />
     </form>
   );
 }

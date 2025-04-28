@@ -2,6 +2,7 @@ import { Manrope } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "@/app/_styles/globals.css";
 import Header from "./_components/Header";
+import { Providers } from "@/app/_components/Providers";
 
 const manropeSans = Manrope({
   display: "swap",
@@ -27,8 +28,10 @@ export default function RootLayout({ children }) {
 
         <div className="flex-1 px-8 py-12 grid">
           <main className="max-w-7xl mx-auto w-full">
-            {children}
-            <Toaster position="top-center" reverseOrder={false} />
+            <Providers>
+              {children}
+              <Toaster position="top-center" reverseOrder={false} />
+            </Providers>
           </main>
         </div>
       </body>
