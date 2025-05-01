@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import SaveButton from "@/app/_components/SaveButton";
 import { useMonthContext } from "@/app/_context/dateContext";
-import { setBudget } from "@/app/_services/actions";
+import { setBudget } from "@/app/_services/data-service";
 import MonthSelector from "@/app/_components/MonthSelector";
 
 export default function SetBudgetForm() {

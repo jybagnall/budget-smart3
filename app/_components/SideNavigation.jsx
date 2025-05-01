@@ -9,26 +9,26 @@ import {
   ReceiptRefundIcon,
 } from "@heroicons/react/24/outline";
 
-const navLinks = [
-  {
-    name: "Dashboard",
-    href: "/spent",
-    icon: <HomeIcon className="h-5 w-5 text-stone-800" />,
-  },
-  {
-    name: "Categories",
-    href: "/spent/categories",
-    icon: <ReceiptRefundIcon className="h-5 w-5 text-stone-800" />,
-  },
-  {
-    name: "Record Spending",
-    href: "/spent/record-spending",
-    icon: <PencilIcon className="h-5 w-5 text-stone-800" />,
-  },
-];
-
 export default function SideNavigation() {
   const pathname = usePathname();
+
+  const navLinks = [
+    {
+      name: "Dashboard",
+      href: `/spent`,
+      icon: <HomeIcon className="h-5 w-5 text-stone-800" />,
+    },
+    {
+      name: "Categories",
+      href: `/spent/categories`,
+      icon: <ReceiptRefundIcon className="h-5 w-5 text-stone-800" />,
+    },
+    {
+      name: "Record Spending",
+      href: `/spent/record-spending`,
+      icon: <PencilIcon className="h-5 w-5 text-stone-800" />,
+    },
+  ];
 
   return (
     <nav className="border-r border-stone-800">

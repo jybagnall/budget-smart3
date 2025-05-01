@@ -12,6 +12,7 @@ export function MonthProvider({ children }) {
   const [targetMonth, setTargetMonth] = useState(currentMonth);
   const [targetYear, setTargetYear] = useState(currentYear);
   const [dateId, setDateId] = useState(null);
+  const [isDateLoading, setIsDateLoading] = useState(true);
 
   const updateTargetMonth = async () => {
     try {
@@ -72,6 +73,7 @@ export function MonthProvider({ children }) {
         setDateId,
         handleMonthChange,
         isSubmittingPast,
+        isDateLoading,
       }}
     >
       {children}
