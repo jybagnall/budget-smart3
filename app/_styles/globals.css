@@ -29,3 +29,18 @@
     }
   }
 }
+
+.animate-highlight {
+  animation: flash-border 2s ease-in-out;
+  border-color: #3b82f6; /* Tailwind's blue-500 */
+  border-width: 2px;
+}
+
+@keyframes flash-border {
+  0% {
+    border-color: #3b82f6;
+  }
+  100% {
+    border-color: transparent;
+  }
+}

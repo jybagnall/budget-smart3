@@ -41,6 +41,9 @@ export default function SetBudgetForm() {
       setTargetYear(dateData.targetYear);
       setDateId(newDateId);
 
+      const twoWeeks = 60 * 60 * 24 * 14;
+      document.cookie = `dateId=${newDateId}; path=/; max-age=${twoWeeks}`;
+
       toast.success("Budget set successfully!");
       router.push("/spent/categories");
     } catch (error) {

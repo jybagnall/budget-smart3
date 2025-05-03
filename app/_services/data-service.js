@@ -140,21 +140,20 @@ export async function getCategories(dateId) {
   return Array.isArray(data) ? data : [];
 }
 
-export async function createCategory(category_name, dateId) {
+export async function getItemsPerCategory(dateId, categoryId) {
   const session = await auth();
   if (!session) throw new Error("You must be logged in!");
 
-  const data = {
-    category_name,
-    user_id: session.user.user_id,
-    date_id: dateId,
-  };
-
-  const { error } = await supabase.from("categories").insert([data]).select();
+  const { data, error } = await supabase
+    .from("items")
+    .select("id, item_name, spent_amount")
+    .eq("date_id", dateId)
+    .eq("category_id", categoryId);
 
   if (error) {
-    throw new Error("Category could not be created");
+    console.error(error);
+    notFound();
   }
 
-  revalidatePath(`/spent/categories`);
+  return Array.isArray(data) ? data : [];
 }

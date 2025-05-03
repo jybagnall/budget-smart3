@@ -7,12 +7,14 @@ export default async function CategoryList({ dateId }) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      <EmptyCategoryCard refreshCategories={getCategories} dateId={dateId} />
+      <EmptyCategoryCard dateId={dateId} />
 
       {categories.map((category) => (
         <CategoryCard
           key={category.id}
           category_name={category.category_name}
+          category_id={category.id}
+          dateId={dateId}
         />
       ))}
     </div>
