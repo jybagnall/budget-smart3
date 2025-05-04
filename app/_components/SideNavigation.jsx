@@ -14,17 +14,17 @@ export default function SideNavigation() {
 
   const navLinks = [
     {
-      name: "Dashboard",
+      name: "Overview",
       href: `/spent`,
       icon: <HomeIcon className="h-5 w-5 text-stone-800" />,
     },
     {
-      name: "Categories",
+      name: "Monthly Categories",
       href: `/spent/categories`,
       icon: <ReceiptRefundIcon className="h-5 w-5 text-stone-800" />,
     },
     {
-      name: "Record Spending",
+      name: "Add Expenses",
       href: `/spent/record-spending`,
       icon: <PencilIcon className="h-5 w-5 text-stone-800" />,
     },

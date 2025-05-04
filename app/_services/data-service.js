@@ -2,7 +2,6 @@
 import supabase from "./supabase";
 import { notFound } from "next/navigation";
 import { auth } from "./auth";
-import { revalidatePath } from "next/cache";
 
 export async function createUser(newUser) {
   const { data, error } = await supabase.from("users").insert([newUser]);
@@ -156,4 +155,70 @@ export async function getItemsPerCategory(dateId, categoryId) {
   }
 
   return Array.isArray(data) ? data : [];
+}
+
+export async function getTotalSumPerCategory(dateId) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const { data, error } = await supabase
+    .from("items")
+    .select("category_id, spent_amount")
+    .eq("date_id", dateId);
+
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
+  const grouped = {};
+
+  for (const row of data || []) {
+    const cid = row.category_id;
+    const amount = Number(row.spent_amount) || 0;
+    grouped[cid] = (grouped[cid] || 0) + amount;
+  }
+
+  const result = Object.entries(grouped).map(([category_id, total]) => ({
+    category_id: Number(category_id),
+    total,
+  }));
+
+  result.sort((a, b) => b.total - a.total);
+
+  return result;
+}
+
+export async function getTotalSpending(dateId) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const { data, error } = await supabase
+    .from("items")
+    .select("spent_amount")
+    .eq("date_id", dateId);
+
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
+  const total =
+    data?.reduce((sum, row) => sum + Number(row.spent_amount), 0) ?? 0;
+  return total;
+}
+
+export async function getThisMonthBudget(dateId) {
+  let { data, error } = await supabase
+    .from("budgets")
+    .select("amount")
+    .eq("date_id", dateId)
+    .single();
+
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
+  return data.amount;
 }

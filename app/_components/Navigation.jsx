@@ -6,24 +6,24 @@ export default function Navigation() {
       <ul className="flex gap-16 items-center">
         <li>
           <Link
-            href="/status"
-            className="hover:text-emerald-600 transition-colors"
+            href="/history"
+            className="hover:text-emerald-600 transition-colors font-semibold"
           >
-            Status
+            History
           </Link>
         </li>
         <li>
           <Link
             href="/spent"
-            className="hover:text-emerald-600 transition-colors"
+            className="hover:text-emerald-600 transition-colors font-semibold"
           >
-            Spent
+            Budgets
           </Link>
         </li>
         <li>
           <Link
             href="/settings"
-            className="hover:text-emerald-600 transition-colors"
+            className="hover:text-emerald-600 transition-colors font-semibold"
           >
             Settings
           </Link>
