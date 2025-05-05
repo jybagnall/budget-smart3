@@ -163,7 +163,7 @@ export async function getTotalSumPerCategory(dateId) {
 
   const { data, error } = await supabase
     .from("items")
-    .select("category_id, spent_amount")
+    .select("category_id, spent_amount, categories(category_name)")
     .eq("date_id", dateId);
 
   if (error) {
@@ -171,22 +171,35 @@ export async function getTotalSumPerCategory(dateId) {
     notFound();
   }
 
-  const grouped = {};
+  // 3. Group and accumulate totals by category
+  const categoryTotals = {}; // hold **one entry per category
 
-  for (const row of data || []) {
-    const cid = row.category_id;
-    const amount = Number(row.spent_amount) || 0;
-    grouped[cid] = (grouped[cid] || 0) + amount;
+  // {
+  //   1: { category_id: 1, category_name: "Groceries", total: 123.45 },
+  //   2: { category_id: 2, category_name: "Utilities", total: 98.00 },
+  //   ...
+  // }
+
+  for (const item of data || []) {
+    const categoryId = item.category_id;
+    const categoryName = item.categories?.category_name || "Unknown";
+    const spent = Number(item.spent_amount) || 0;
+
+    if (!categoryTotals[categoryId]) {
+      categoryTotals[categoryId] = {
+        category_id: categoryId,
+        category_name: categoryName,
+        total: 0,
+      };
+    }
+
+    categoryTotals[categoryId].total += spent;
   }
 
-  const result = Object.entries(grouped).map(([category_id, total]) => ({
-    category_id: Number(category_id),
-    total,
-  }));
+  // 4. Convert grouped object to array and sort by total (desc)
+  const convertedToArray = Object.values(categoryTotals);
 
-  result.sort((a, b) => b.total - a.total);
-
-  return result;
+  return convertedToArray;
 }
 
 export async function getTotalSpending(dateId) {

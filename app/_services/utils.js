@@ -1,45 +1,47 @@
-const bgColors = [
-  "bg-red-500",
-  "bg-blue-500",
-  "bg-green-500",
-  "bg-yellow-500",
-  "bg-purple-500",
-  "bg-pink-500",
-  "bg-indigo-500",
-  "bg-teal-500",
-  "bg-orange-500",
+export const bgColors = [
+  "bg-red-400",
+  "bg-blue-400",
+  "bg-green-400",
+  "bg-amber-400",
+  "bg-violet-400",
+  "bg-pink-400",
+  "bg-indigo-400",
+  "bg-teal-400",
+  "bg-orange-400",
 ];
 
 const hexColors = [
-  "#ef4444", // red-500
-  "#60a5fa", // blue-500
-  "#10b981", // green-500
-  "#f59e0b", // amber-500
-  "#a78bfa", // violet-500
-  "#fb7185", // pink-500
-  "#818cf8", // indigo-500
-  "#2dd4bf", // teal-500
-  "#f97316", // orange-500
+  "#f87171", // red-400
+  "#60a5fa", // blue-400 (unchanged, already -400)
+  "#34d399", // green-400
+  "#fbbf24", // amber-400
+  "#c4b5fd", // violet-400
+  "#fda4af", // pink-400
+  "#a5b4fc", // indigo-400
+  "#5eead4", // teal-400
+  "#fb923c", // orange-400
 ];
 
-export function getRandomColor(categoryName) {
+function hashCategory(name) {
   let hash = 0;
-  for (let i = 0; i < categoryName.length; i++) {
-    hash = categoryName.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return bgColors[Math.abs(hash) % bgColors.length];
+  return Math.abs(hash);
 }
 
-export const getHexColor = (categoryName) => {
-  let hash = 0;
-  for (let i = 0; i < categoryName.length; i++) {
-    hash = categoryName.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return hexColors[Math.abs(hash) % hexColors.length];
+export function applyRandomColor(categoryName) {
+  const index = hashCategory(categoryName) % bgColors.length;
+  return bgColors[index];
+}
+
+export const applyHexColor = (categoryName) => {
+  const index = hashCategory(categoryName) % hexColors.length;
+  return hexColors[index];
 };
 
-export const getTextColor = (bgHex) => {
-  const rgb = parseInt(bgHex.slice(1), 16); // skip #
+export const applyTextColor = (bgHex) => {
+  const rgb = parseInt(bgHex.slice(1), 16);
   const r = (rgb >> 16) & 255;
   const g = (rgb >> 8) & 255;
   const b = rgb & 255;
@@ -57,4 +59,17 @@ export function formatMoney(number) {
   return Math.floor(number)
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+export function getTopThreeNames(array) {
+  const sliicedArray = array
+    .filter((item) => Number(item.total) > 0)
+    .sort((a, b) => Number(b.total) - Number(a.total))
+    .slice(0, 3);
+
+  const resultArray = sliicedArray.map(
+    (item) => item.category_name || "Unknown"
+  );
+
+  return resultArray.join(", ");
 }
