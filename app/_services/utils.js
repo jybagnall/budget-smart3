@@ -62,12 +62,14 @@ export function formatMoney(number) {
 }
 
 export function getTopThreeNames(array) {
-  const sliicedArray = array
+  const slicedArray = array
     .filter((item) => Number(item.total) > 0)
     .sort((a, b) => Number(b.total) - Number(a.total))
     .slice(0, 3);
 
-  const resultArray = sliicedArray.map(
+  if (slicedArray.length === 0) return "No data";
+
+  const resultArray = slicedArray.map(
     (item) => item.category_name || "Unknown"
   );
 

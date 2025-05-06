@@ -5,6 +5,7 @@ import OverviewStatList from "@/app/_components/OverviewStatList";
 import ChartContainer from "@/app/_components/ChartContainer";
 import { getTotalSumPerCategory } from "@/app/_services/data-service";
 import ChartExplanation from "@/app/_components/ChartExplanation";
+import BiggestPurchase from "@/app/_components/BiggestPurchase";
 
 export default async function Page() {
   const cookieStore = await cookies();
@@ -43,7 +44,8 @@ export default async function Page() {
         <div className="space-y-6 pb-4 xl:space-y-10">
           <div>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h2 className="text-lg font-semibold">Biggest Purchase</h2>
+              <h2 className="text-lg font-semibold mb-3">Biggest Purchases</h2>
+              <BiggestPurchase dateId={dateId} />
             </div>
           </div>
         </div>

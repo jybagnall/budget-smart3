@@ -19,7 +19,7 @@ export default function ChartContainer({ totalSumPerCategory }) {
         color: ishovered ? "#e0f2fe" : baseColor,
       };
     })
-    .filter((entry) => entry.value > 0);
+    .filter((object) => object.value > 0);
 
   const isChartEmpty =
     chartData.length === 0 || chartData.every((d) => d.value === 0);

@@ -7,8 +7,8 @@ import SpendingList from "@/app/_components/SpendingList";
 import Spinner from "@/app/_components/Spinner";
 
 export default async function Page({ searchParams }) {
-  const cookieStore = cookies();
-  const fallbackDateId = await cookieStore.get("dateId")?.value;
+  const cookieStore = await cookies();
+  const fallbackDateId = cookieStore.get("dateId")?.value;
   const { dateId } = await searchParams;
 
   const newDateId = dateId || fallbackDateId;

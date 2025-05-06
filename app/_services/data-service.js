@@ -2,6 +2,7 @@
 import supabase from "./supabase";
 import { notFound } from "next/navigation";
 import { auth } from "./auth";
+import { getAuthenticatedUserId } from "./actions";
 
 export async function createUser(newUser) {
   const { data, error } = await supabase.from("users").insert([newUser]);
@@ -25,13 +26,12 @@ export async function getUser(email) {
 }
 
 export async function getTargetMonthAfterLogin() {
-  const session = await auth();
-  if (!session) throw new Error("You must be logged in!");
+  const user_id = await getAuthenticatedUserId();
 
   const { data, error } = await supabase
     .from("dates")
     .select("id, year, month")
-    .eq("user_id", session.user.user_id);
+    .eq("user_id", user_id);
 
   if (error) {
     throw new Error("Could not fetch date data");
@@ -47,13 +47,12 @@ export async function getTargetMonthAfterLogin() {
 }
 
 export async function getMonthAndYear(date_id) {
-  const session = await auth();
-  if (!session) throw new Error("You must be logged in!");
+  const user_id = await getAuthenticatedUserId();
 
   const { data, error } = await supabase
     .from("dates")
     .select("month, year")
-    .eq("user_id", session.user.user_id)
+    .eq("user_id", user_id)
     .eq("id", date_id)
     .single();
 
@@ -65,19 +64,18 @@ export async function getMonthAndYear(date_id) {
 }
 
 export async function setBudget(dateData, data) {
-  const session = await auth();
-  if (!session) throw new Error("You must be logged in!");
+  const user_id = await getAuthenticatedUserId();
 
   const date = {
     year: dateData.targetYear,
     month: dateData.targetMonth + 1,
-    user_id: session.user.user_id,
+    user_id,
   };
 
   const { data: existingDate, error: fetchError } = await supabase
     .from("dates")
     .select("id")
-    .eq("user_id", session.user.user_id)
+    .eq("user_id", user_id)
     .eq("month", dateData.targetMonth + 1)
     .eq("year", dateData.targetYear)
     .single();
@@ -122,13 +120,12 @@ export async function setBudget(dateData, data) {
 }
 
 export async function getCategories(dateId) {
-  const session = await auth();
-  if (!session) throw new Error("You must be logged in!");
+  const user_id = await getAuthenticatedUserId();
 
   const { data, error } = await supabase
     .from("categories")
     .select("id, category_name")
-    .eq("user_id", session.user.user_id)
+    .eq("user_id", user_id)
     .eq("date_id", dateId);
 
   if (error) {
@@ -171,7 +168,7 @@ export async function getTotalSumPerCategory(dateId) {
     notFound();
   }
 
-  // 3. Group and accumulate totals by category
+  // 3. Group items that belong to the same category & accumulate totals
   const categoryTotals = {}; // hold **one entry per category
 
   // {
@@ -185,6 +182,7 @@ export async function getTotalSumPerCategory(dateId) {
     const categoryName = item.categories?.category_name || "Unknown";
     const spent = Number(item.spent_amount) || 0;
 
+    // if already exists, skip the initialization.
     if (!categoryTotals[categoryId]) {
       categoryTotals[categoryId] = {
         category_id: categoryId,
@@ -196,7 +194,7 @@ export async function getTotalSumPerCategory(dateId) {
     categoryTotals[categoryId].total += spent;
   }
 
-  // 4. Convert grouped object to array and sort by total (desc)
+  // 4. Convert grouped object to array
   const convertedToArray = Object.values(categoryTotals);
 
   return convertedToArray;
@@ -218,11 +216,15 @@ export async function getTotalSpending(dateId) {
 
   const total =
     data?.reduce((sum, row) => sum + Number(row.spent_amount), 0) ?? 0;
+
   return total;
 }
 
 export async function getThisMonthBudget(dateId) {
-  let { data, error } = await supabase
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const { data, error } = await supabase
     .from("budgets")
     .select("amount")
     .eq("date_id", dateId)
@@ -234,4 +236,23 @@ export async function getThisMonthBudget(dateId) {
   }
 
   return data.amount;
+}
+
+export async function getThreeBiggestPurchase(dateId) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const { data, error } = await supabase
+    .from("items")
+    .select("item_name, spent_amount")
+    .eq("date_id", dateId)
+    .order("spent_amount", { ascending: false })
+    .limit(3);
+
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
+  return data || [];
 }

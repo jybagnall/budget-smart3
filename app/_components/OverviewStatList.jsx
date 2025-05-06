@@ -1,13 +1,15 @@
 import {
   getThisMonthBudget,
   getTotalSpending,
-  getTotalSumPerCategory,
 } from "../_services/data-service";
 import Image from "next/image";
 import { formatMoney, getTopThreeNames } from "../_services/utils";
 import OverviewStatBox from "./OverviewStatBox";
 
-export default async function OverviewStatList({ dateId, totalSumPerCategory }) {
+export default async function OverviewStatList({
+  dateId,
+  totalSumPerCategory,
+}) {
   const totalSpending = await getTotalSpending(dateId);
   const budget = await getThisMonthBudget(dateId);
   const remainingBudget = Number(budget) - Number(totalSpending);

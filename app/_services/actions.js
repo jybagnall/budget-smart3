@@ -5,7 +5,6 @@ import { auth, signIn, signOut } from "./auth";
 import { redirect } from "next/navigation";
 
 import { revalidatePath } from "next/cache";
-import { getTargetMonthAfterLogin } from "./data-service";
 
 export async function signInAction() {
   await signIn("google", { redirectTo: "/after-login" });
@@ -15,13 +14,22 @@ export async function signOutAction() {
   await signOut({ redirectTo: "/" });
 }
 
-export async function createCategory(category_name, dateId) {
+export async function getAuthenticatedUserId() {
   const session = await auth();
-  if (!session) throw new Error("You must be logged in!");
+
+  if (!session || !session.user?.user_id) {
+    throw new Error("You must be logged in with valid session data.");
+  }
+
+  return session.user.user_id;
+}
+
+export async function createCategory(category_name, dateId) {
+  const user_id = await getAuthenticatedUserId();
 
   const data = {
     category_name,
-    user_id: session.user.user_id,
+    user_id,
     date_id: dateId,
   };
 
@@ -56,4 +64,34 @@ export async function createItem(item_name, spent_amount, dateId, categoryId) {
   }
 
   revalidatePath("/spent/record-spending");
+}
+
+export async function deleteUserAccount() {
+  const user_id = await getAuthenticatedUserId();
+
+  const { error } = await supabase.from("users").delete().eq("id", user_id);
+
+  if (error) {
+    throw new Error("Failed to delete user account");
+  }
+
+  revalidatePath("/settings");
+  redirect("/settings/delete-confirmation");
+}
+
+export async function resetSpendingRecords(dateId) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const { error } = await supabase.from("items").delete().eq("date_id", dateId);
+
+  if (error) {
+    throw new Error("Failed to delete spending records");
+  }
+
+  revalidatePath("/spent");
+  revalidatePath("/spent/categories");
+  revalidatePath("/spent/record-spending");
+
+  redirect("/spent");
 }
