@@ -3,6 +3,7 @@ import supabase from "./supabase";
 import { notFound } from "next/navigation";
 import { auth } from "./auth";
 import { getAuthenticatedUserId } from "./actions";
+import { getMonthName } from "./utils";
 
 export async function createUser(newUser) {
   const { data, error } = await supabase.from("users").insert([newUser]);
@@ -46,14 +47,14 @@ export async function getTargetMonthAfterLogin() {
   }
 }
 
-export async function getMonthAndYear(date_id) {
+export async function getMonthAndYear(dateId) {
   const user_id = await getAuthenticatedUserId();
 
   const { data, error } = await supabase
     .from("dates")
     .select("month, year")
     .eq("user_id", user_id)
-    .eq("id", date_id)
+    .eq("id", dateId)
     .single();
 
   if (error) {
@@ -168,21 +169,13 @@ export async function getTotalSumPerCategory(dateId) {
     notFound();
   }
 
-  // 3. Group items that belong to the same category & accumulate totals
   const categoryTotals = {}; // hold **one entry per category
-
-  // {
-  //   1: { category_id: 1, category_name: "Groceries", total: 123.45 },
-  //   2: { category_id: 2, category_name: "Utilities", total: 98.00 },
-  //   ...
-  // }
 
   for (const item of data || []) {
     const categoryId = item.category_id;
     const categoryName = item.categories?.category_name || "Unknown";
     const spent = Number(item.spent_amount) || 0;
 
-    // if already exists, skip the initialization.
     if (!categoryTotals[categoryId]) {
       categoryTotals[categoryId] = {
         category_id: categoryId,
@@ -194,7 +187,6 @@ export async function getTotalSumPerCategory(dateId) {
     categoryTotals[categoryId].total += spent;
   }
 
-  // 4. Convert grouped object to array
   const convertedToArray = Object.values(categoryTotals);
 
   return convertedToArray;
@@ -255,4 +247,53 @@ export async function getThreeBiggestPurchase(dateId) {
   }
 
   return data || [];
+}
+
+export async function getLastThreeMonths() {
+  const user_id = await getAuthenticatedUserId();
+
+  const { data, error } = await supabase
+    .from("dates")
+    .select("id")
+    .eq("user_id", user_id)
+    .lt("created_at", new Date().toISOString())
+    .order("created_at", { ascending: true })
+    .limit(3);
+
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
+  if (!data || data.length === 0) {
+    return [];
+  }
+
+  return data;
+}
+
+export async function getLastThreeMonthsSummary() {
+  const lastThreeMonthsIds = await getLastThreeMonths();
+
+  const results = await Promise.all(
+    lastThreeMonthsIds.map(async ({ id }) => {
+      const [totalSpending, budget, dateInfo] = await Promise.all([
+        getTotalSpending(id),
+        getThisMonthBudget(id),
+        getMonthAndYear(id),
+      ]);
+
+      return {
+        date: {
+          month: getMonthName(dateInfo.month - 1),
+          year: dateInfo.year,
+        },
+        actual_spending: totalSpending,
+        budget,
+        status: budget - totalSpending,
+      };
+    })
+  );
+
+  return results;
 }
