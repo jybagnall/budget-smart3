@@ -1,7 +1,7 @@
 import {
   getThisMonthBudget,
   getTotalSpending,
-} from "../_services/data-service";
+} from "@/app/_services/data-service";
 import Image from "next/image";
 import { formatMoney, getTopThreeNames } from "../_services/utils";
 import OverviewStatBox from "./OverviewStatBox";

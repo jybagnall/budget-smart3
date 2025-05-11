@@ -1,9 +1,11 @@
-import SummaryCard from "./SummaryCard";
+import SummaryCard from "@/app/_components/SummaryCard";
 import { formatMoney } from "@/app/_services/utils";
 
-export default function BarChartSummary({ result }) {
+export default function SpendingOverviewSummary({ result }) {
+  const message = result.length < 3 && "*Only partial data shown";
+
   return (
-    <ul role="list" className="mt-5 grid grid-rows-3 gap-5">
+    <ul role="list" className="mt-12 grid grid-rows-3 gap-5">
       {result.map((entry) => (
         <SummaryCard
           key={entry.date.month}
@@ -15,6 +17,10 @@ export default function BarChartSummary({ result }) {
           status={entry.status}
         />
       ))}
+
+      <p className="text-gray-500 text-xs font-semibold mt-2 text-left">
+        {message}{" "}
+      </p>
     </ul>
   );
 }

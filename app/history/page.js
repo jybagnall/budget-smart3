@@ -1,35 +1,35 @@
-import BarChartPanel from "@/app/_components/BarChartPanel";
-import BarChartSummary from "@/app/_components/BarChartSummary";
-
-import { getLastThreeMonthsSummary } from "@/app/_services/data-service";
+import SpendingOverviewChart from "@/app/_components/SpendingOverviewChart";
+import SpendingOverviewSummary from "@/app/_components/SpendingOverviewSummary";
+import TopCategoriesChart from "@/app/_components/TopCategoriesChart";
+import TopCategoriesSummary from "@/app/_components/TopCategoriesSummary";
+import {
+  getLastThreeMonthsSummary,
+  getTopSpendingCategoriesByMonth,
+} from "@/app/_services/data-service";
 
 export default async function Page() {
-  const result = await getLastThreeMonthsSummary();
+  const summaryResult = await getLastThreeMonthsSummary();
+  const topCategories = await getTopSpendingCategoriesByMonth();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
-      <div className="w-full">
-        <BarChartPanel result={result} />
+    <div className="space-y-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="w-full">
+          <SpendingOverviewChart result={summaryResult} />
+        </div>
+        <div className="w-full">
+          <SpendingOverviewSummary result={summaryResult} />
+        </div>
       </div>
-      <div className="w-full">
-        <BarChartSummary result={result} />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="w-full">
+          <TopCategoriesChart topCategories={topCategories} />
+        </div>
+        <div className="w-full">
+          <TopCategoriesSummary topCategories={topCategories} />
+        </div>
       </div>
     </div>
   );
 }
-
-// Monthly Spending Summary (bar graph, last 3 months)
-// Top Spending Categories (scatter chart)
-
-// If data.length === 0: show "No data available"
-
-// If data.length < 3: maybe indicate "Only partial data shown"
-
-// [
-//   {
-//     date: { month: "March", year: 2024 },
-//     spending: 1200,
-//     budget: 1500
-//   },
-//   ...
-// ]

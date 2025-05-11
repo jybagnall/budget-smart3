@@ -3,19 +3,34 @@ import { cookies } from "next/headers";
 import OverviewHeader from "@/app/_components/OverviewHeader";
 import OverviewStatList from "@/app/_components/OverviewStatList";
 import ChartContainer from "@/app/_components/ChartContainer";
-import { getTotalSumPerCategory } from "@/app/_services/data-service";
+import {
+  getAllMonthAndYearInfo,
+  getMonthAndYear,
+  getTotalSumPerCategory,
+} from "@/app/_services/data-service";
 import ChartExplanation from "@/app/_components/ChartExplanation";
 import BiggestPurchase from "@/app/_components/BiggestPurchase";
 
 export default async function Page() {
   const cookieStore = await cookies();
   const dateId = cookieStore.get("dateId")?.value;
-  const totalSumPerCategory = await getTotalSumPerCategory(dateId);
+
+  const { month: currentMonth, year: currentYear } = await getMonthAndYear(
+    dateId
+  );
+  const allMonthsAndYears = await getAllMonthAndYearInfo();
+  const totalSumPerCategory = await getTotalSumPerCategory(dateId); //
 
   return (
     <main>
       <div className="relative isolate overflow-hidden -mt-4">
-        <OverviewHeader dateId={dateId} />
+        <OverviewHeader
+          currentMonth={currentMonth}
+          currentYear={currentYear}
+          allMonthsAndYears={allMonthsAndYears}
+          dateId={dateId}
+        />
+
         <div className="border-b border-b-gray-900/10 lg:border-t lg:border-t-gray-900/5">
           <OverviewStatList
             dateId={dateId}

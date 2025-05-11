@@ -1,6 +1,12 @@
 import { formatMoney } from "@/app/_services/utils";
 
-export default function SummaryCard({ key, bgColor, head, body, status }) {
+export default function SummaryCard({
+  key,
+  bgColor,
+  head,
+  body,
+  status = null,
+}) {
   return (
     <li key={key} className="col-span-1 flex rounded-md shadow-sm min-h-[50px]">
       <div
@@ -14,13 +20,15 @@ export default function SummaryCard({ key, bgColor, head, body, status }) {
           {body}
         </p>
 
-        <span
-          className={`absolute top-2 right-4 text-xs font-semibold ${
-            (status ?? 0) > 0 ? "text-emerald-600" : "text-rose-600"
-          }`}
-        >
-          {status > 0 ? `+${formatMoney(status)}` : `-${formatMoney(status)}`}
-        </span>
+        {status !== null && (
+          <span
+            className={`absolute top-2 right-4 text-xs font-semibold ${
+              (status ?? 0) > 0 ? "text-emerald-600" : "text-rose-600"
+            }`}
+          >
+            {status > 0 ? `+${formatMoney(status)}` : `-${formatMoney(status)}`}
+          </span>
+        )}
       </div>
     </li>
   );

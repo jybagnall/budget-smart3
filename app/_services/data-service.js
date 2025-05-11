@@ -297,3 +297,52 @@ export async function getLastThreeMonthsSummary() {
 
   return results;
 }
+
+export async function getTopSpendingCategoriesByMonth() {
+  const lastThreeMonthsIds = await getLastThreeMonths();
+
+  const result = await Promise.all(
+    lastThreeMonthsIds.map(async ({ id }) => {
+      const arrayOfAllCategories = await getTotalSumPerCategory(id);
+      const sorted = [...arrayOfAllCategories].sort(
+        (a, b) => b.total - a.total
+      );
+
+      const topCategory = sorted[0];
+
+      if (!topCategory) return null;
+
+      const { month } = await getMonthAndYear(id);
+
+      return {
+        category: topCategory.category_name,
+        total: topCategory.total,
+        monthName: getMonthName(month - 1),
+      };
+    })
+  );
+
+  return result.filter(Boolean);
+}
+
+export async function getAllMonthAndYearInfo() {
+  const user_id = await getAuthenticatedUserId();
+
+  const { data, error } = await supabase
+    .from("dates")
+    .select("id, month, year")
+    .eq("user_id", user_id)
+    .order("year", { ascending: true })
+    .order("month", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
+  if (!data || data.length === 0) {
+    return [];
+  }
+
+  return data;
+}
