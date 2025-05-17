@@ -2,6 +2,7 @@
 import supabase from "./supabase";
 import { notFound } from "next/navigation";
 import { auth } from "./auth";
+import { startOfMonth, subMonths } from "date-fns";
 import { getAuthenticatedUserId } from "./actions";
 import { getMonthName } from "./utils";
 
@@ -28,6 +29,8 @@ export async function getUser(email) {
 
 export async function getTargetMonthAfterLogin() {
   const user_id = await getAuthenticatedUserId();
+
+  if (!user_id) return { status: null, date: null };
 
   const { data, error } = await supabase
     .from("dates")
@@ -127,7 +130,8 @@ export async function getCategories(dateId) {
     .from("categories")
     .select("id, category_name")
     .eq("user_id", user_id)
-    .eq("date_id", dateId);
+    .eq("date_id", dateId)
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -145,7 +149,8 @@ export async function getItemsPerCategory(dateId, categoryId) {
     .from("items")
     .select("id, item_name, spent_amount")
     .eq("date_id", dateId)
-    .eq("category_id", categoryId);
+    .eq("category_id", categoryId)
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -252,13 +257,21 @@ export async function getThreeBiggestPurchase(dateId) {
 export async function getLastThreeMonths() {
   const user_id = await getAuthenticatedUserId();
 
+  const now = startOfMonth(new Date()); // 2025-05-01T00:00:00.000Z
+
+  const lastThreeMonths = [subMonths(now, 2), subMonths(now, 1), now];
+  // lastThreeMonths = [ March 1, 2025, April 1, 2025, May 1, 2025 ];
+
+  const orConditions = lastThreeMonths
+    .map((d) => `and(year.eq.${d.getFullYear()},month.eq.${d.getMonth() + 1})`)
+    .join(",");
+  // "and(year.eq.2025,month.eq.3),and(year.eq.2025,month.eq.4), ..."
+
   const { data, error } = await supabase
     .from("dates")
-    .select("id")
+    .select("id, month, year")
     .eq("user_id", user_id)
-    .lt("created_at", new Date().toISOString())
-    .order("created_at", { ascending: true })
-    .limit(3);
+    .or(orConditions);
 
   if (error) {
     console.error(error);
@@ -269,7 +282,11 @@ export async function getLastThreeMonths() {
     return [];
   }
 
-  return data;
+  const sortedData = data.sort(
+    (a, b) => new Date(a.year, a.month - 1) - new Date(b.year, b.month - 1)
+  );
+
+  return sortedData;
 }
 
 export async function getLastThreeMonthsSummary() {

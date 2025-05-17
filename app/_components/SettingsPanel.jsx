@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 
 import ConfirmationModalMsg from "@/app/_components/ConfirmationModalMsg";
 import {
@@ -11,6 +12,11 @@ import {
 export default function SettingPanel({ dateId }) {
   const [deleteWarningOpen, setDeleteWarningOpen] = useState(false);
   const [resetWarningOpen, setResetWarningOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/settings/delete-confirmation" });
+  };
+
   return (
     <div className="max-w-2xl mx-auto space-y-12 px-4 py-10 sm:px-6 lg:px-8">
       {/* Reset Data */}
@@ -63,6 +69,7 @@ export default function SettingPanel({ dateId }) {
       {deleteWarningOpen && (
         <ConfirmationModalMsg
           serverAction={deleteUserAccount}
+          handleSignOut={handleSignOut}
           deleteMsg="YES, DELETE MY ACCOUNT"
         />
       )}

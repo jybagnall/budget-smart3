@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${manropeSans.className} antialiased font-sans min-h-screen bg-stone-50 flex flex-col`}
+        className={`${manropeSans.className} antialiased font-sans min-h-screen flex flex-col`}
       >
         <Header />
 

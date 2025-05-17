@@ -1,14 +1,11 @@
 import { formatMoney } from "@/app/_services/utils";
 
-export default function SummaryCard({
-  key,
-  bgColor,
-  head,
-  body,
-  status = null,
-}) {
+export default function SummaryCard({ bgColor, head, body, status = null }) {
   return (
-    <li key={key} className="col-span-1 flex rounded-md shadow-sm min-h-[50px]">
+    <li
+      key={head}
+      className="col-span-1 flex rounded-md shadow-sm min-h-[50px]"
+    >
       <div
         className={`flex w-16 shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white ${bgColor}`}
       >

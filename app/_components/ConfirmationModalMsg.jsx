@@ -8,8 +8,20 @@ import {
 import { useState } from "react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
-export default function ConfirmationModalMsg({ serverAction, deleteMsg }) {
+export default function ConfirmationModalMsg({
+  serverAction,
+  deleteMsg,
+  handleSignOut,
+}) {
   const [open, setOpen] = useState(true);
+
+  const handleSubmit = async () => {
+    await serverAction();
+
+    if (handleSignOut) {
+      await handleSignOut();
+    }
+  };
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -47,7 +59,7 @@ export default function ConfirmationModalMsg({ serverAction, deleteMsg }) {
             </div>
             <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
               <form
-                action={serverAction}
+                action={handleSubmit}
                 className="inline-flex w-full justify-center rounded-md bg-rose-500 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-rose-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 sm:col-start-2"
               >
                 <button type="submit" onClick={() => setOpen(false)}>

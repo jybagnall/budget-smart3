@@ -7,6 +7,10 @@ import {
   getTopSpendingCategoriesByMonth,
 } from "@/app/_services/data-service";
 
+export const metadata = {
+  title: "History"
+};
+
 export default async function Page() {
   const summaryResult = await getLastThreeMonthsSummary();
   const topCategories = await getTopSpendingCategoriesByMonth();

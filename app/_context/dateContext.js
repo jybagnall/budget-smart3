@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
+
 import { getTargetMonthAfterLogin } from "@/app/_services/data-service";
 
 const MonthContext = createContext();
@@ -17,6 +18,8 @@ export function MonthProvider({ children }) {
   const updateTargetMonth = async () => {
     try {
       const { status, date } = await getTargetMonthAfterLogin();
+
+      if (!status || !date) return;
 
       if (status === "single") {
         setTargetMonth(date.month - 1);

@@ -46,10 +46,6 @@ export default function SideNavigation() {
             </Link>
           </li>
         ))}
-
-        <li className="mt-auto">
-          <SignOutButton />
-        </li>
       </ul>
     </nav>
   );

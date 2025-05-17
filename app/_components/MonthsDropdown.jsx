@@ -14,6 +14,8 @@ import { getMonthName } from "@/app/_services/utils";
 
 export default function MonthDropdown({ dates }) {
   const [selected, setSelected] = useState(dates[0]);
+  const [isNavigating, setIsNavigating] = useState(false);
+
   const { setTargetMonth, setTargetYear, setDateId } = useMonthContext();
   const router = useRouter();
 
@@ -30,6 +32,7 @@ export default function MonthDropdown({ dates }) {
     setTargetYear(value.year);
     setDateId(value.id);
 
+    setIsNavigating(true);
     handleNavigate(value.id);
   };
 
@@ -72,9 +75,10 @@ export default function MonthDropdown({ dates }) {
 
       <button
         onClick={() => handleNavigate(selected.id)}
+        disabled={isNavigating}
         className="mt-6 w-full rounded-lg bg-emerald-500 px-4 py-3 text-white font-medium shadow hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
       >
-        Continue to Budget
+        {isNavigating ? "Navigating..." : "Continue to Budget"}
       </button>
     </div>
   );

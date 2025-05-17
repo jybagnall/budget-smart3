@@ -11,6 +11,10 @@ import {
 import ChartExplanation from "@/app/_components/ChartExplanation";
 import BiggestPurchase from "@/app/_components/BiggestPurchase";
 
+export const metadata = {
+  title: "Budgets",
+};
+
 export default async function Page() {
   const cookieStore = await cookies();
   const dateId = cookieStore.get("dateId")?.value;
@@ -19,7 +23,7 @@ export default async function Page() {
     dateId
   );
   const allMonthsAndYears = await getAllMonthAndYearInfo();
-  const totalSumPerCategory = await getTotalSumPerCategory(dateId); //
+  const totalSumPerCategory = await getTotalSumPerCategory(dateId);
 
   return (
     <main>

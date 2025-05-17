@@ -5,6 +5,7 @@ import { auth, signIn, signOut } from "./auth";
 import { redirect } from "next/navigation";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export async function signInAction() {
   await signIn("google", { redirectTo: "/after-login" });
@@ -18,7 +19,7 @@ export async function getAuthenticatedUserId() {
   const session = await auth();
 
   if (!session || !session.user?.user_id) {
-    throw new Error("You must be logged in with valid session data.");
+    return null;
   }
 
   return session.user.user_id;
@@ -74,9 +75,6 @@ export async function deleteUserAccount() {
   if (error) {
     throw new Error("Failed to delete user account");
   }
-
-  revalidatePath("/settings");
-  redirect("/settings/delete-confirmation");
 }
 
 export async function resetSpendingRecords(dateId) {
@@ -94,4 +92,76 @@ export async function resetSpendingRecords(dateId) {
   revalidatePath("/spent/record-spending");
 
   redirect("/spent");
+}
+
+export async function deleteCategory(categoryId) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const { error: itemError } = await supabase
+    .from("items")
+    .delete()
+    .eq("category_id", categoryId);
+
+  if (itemError) {
+    throw new Error("Failed to delete related items");
+  }
+  const { error: categoryError } = await supabase
+    .from("categories")
+    .delete()
+    .eq("id", categoryId);
+
+  if (categoryError) {
+    throw new Error("Failed to delete requested category");
+  }
+
+  revalidatePath("/spent");
+  revalidatePath("/spent/categories");
+  revalidatePath("/spent/record-spending");
+  revalidatePath("/history");
+}
+
+export async function editCategoryName(categoryName, categoryId) {
+  const user_id = await getAuthenticatedUserId();
+
+  const { error } = await supabase
+    .from("categories")
+    .update({ category_name: categoryName })
+    .eq("id", categoryId)
+    .eq("user_id", user_id)
+    .select();
+
+  if (error) {
+    throw new Error("Failed to update category name");
+  }
+
+  revalidatePath("/history");
+  revalidatePath("/spent");
+  revalidatePath("/spent/categories");
+  revalidatePath("/spent/record-spending");
+}
+
+export async function editItem(itemId, itemName, itemAmount) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const data = {
+    item_name: itemName,
+    spent_amount: itemAmount,
+  };
+
+  const { error } = await supabase
+    .from("items")
+    .update(data)
+    .eq("id", itemId)
+    .select();
+
+  if (error) {
+    throw new Error("Failed to update item");
+  }
+
+  revalidatePath("/history");
+  revalidatePath("/spent");
+  revalidatePath("/spent/categories");
+  revalidatePath("/spent/record-spending");
 }

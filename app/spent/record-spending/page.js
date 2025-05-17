@@ -1,10 +1,16 @@
 import { cookies } from "next/headers";
 import { Suspense } from "react";
-import AddItemForm from "@/app/_components/AddItemForm";
 import { getCategories } from "@/app/_services/data-service";
+import { deleteCategory } from "@/app/_services/actions";
+import AddItemForm from "@/app/_components/AddItemForm";
 import ScrollToHash from "@/app/_components/ScrollToHash";
 import SpendingList from "@/app/_components/SpendingList";
 import Spinner from "@/app/_components/Spinner";
+import CategoryHeaderInRecord from "@/app/_components/CategoryHeaderInRecord";
+
+export const metadata = {
+  title: "Add Expenses",
+};
 
 export default async function Page({ searchParams }) {
   const cookieStore = await cookies();
@@ -24,9 +30,10 @@ export default async function Page({ searchParams }) {
           className="rounded-xl border border-gray-200 bg-white shadow-sm p-6"
           style={{ scrollMarginTop: "6rem" }}
         >
-          <div className="mb-4 text-lg font-semibold text-emerald-600">
-            {category.category_name}
-          </div>
+          <CategoryHeaderInRecord
+            category={category}
+            deleteCategory={deleteCategory}
+          />
 
           <AddItemForm category_id={category.id} dateId={newDateId} />
 

@@ -1,14 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
-import bg from "@/public/bg.png";
+import budget_bg from "@/public/budget_bg.JPG";
+import { auth } from "@/app/_services/auth";
 
-export default function Page() {
+export default async function Page() {
+  const session = await auth();
+
   return (
     <div className="mt-24 overflow-hidden">
       <Image
-        src={bg}
+        src={budget_bg}
         fill
-        placeholder="blur"
         quality={80}
         className="object-cover object-top"
         alt="Homepage background"
@@ -19,12 +21,14 @@ export default function Page() {
           Track expenses, <br />
           and stay on top of your finances.
         </h1>
-        <Link
-          href="/login"
-          className="inline-block px-8 py-4 bg-blue-50 text-teal-800 text-lg font-semibold hover:text-teal-600 transition-all rounded-md"
-        >
-          Get Started
-        </Link>
+        {!session?.user && (
+          <Link
+            href="/login"
+            className="inline-block px-8 py-4 bg-blue-50 text-teal-800 text-lg font-semibold hover:text-teal-600 transition-all rounded-md"
+          >
+            Get Started
+          </Link>
+        )}
       </div>
     </div>
   );

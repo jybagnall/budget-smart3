@@ -6,7 +6,7 @@ export default function Page() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center mt-24">
       <div className="mx-auto max-w-3xl">
         <div
-          className="mx-auto w-20 h-20 rounded-full bg-green-300
+          className="mx-auto w-20 h-20 rounded-full bg-green-400
              flex items-center justify-center shadow-xl
              ring-4 ring-emerald-100 mb-10 animate-in fade-in zoom-in duration-300"
         >

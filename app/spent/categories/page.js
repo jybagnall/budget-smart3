@@ -5,6 +5,10 @@ import Spinner from "@/app/_components/Spinner";
 import { getMonthAndYear } from "@/app/_services/data-service";
 import { getMonthName } from "@/app/_services/utils";
 
+export const metadata = {
+  title: "Monthly Categories"
+};
+
 export default async function Page() {
   const cookieStore = await cookies();
   const dateId = cookieStore.get("dateId")?.value;

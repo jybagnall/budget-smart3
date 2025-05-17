@@ -11,7 +11,7 @@ export default function SpendingOverviewSummary({ result }) {
           key={entry.date.month}
           bgColor="bg-emerald-500"
           head={entry.date.month}
-          body={`$ ${formatMoney(entry.spending ?? 0)} of ${formatMoney(
+          body={`$ ${formatMoney(entry.actual_spending ?? 0)} of ${formatMoney(
             entry.budget
           )} used`}
           status={entry.status}
