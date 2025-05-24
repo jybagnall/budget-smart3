@@ -1,14 +1,14 @@
-import SpendingOverviewChart from "@/app/_components/SpendingOverviewChart";
-import SpendingOverviewSummary from "@/app/_components/SpendingOverviewSummary";
-import TopCategoriesChart from "@/app/_components/TopCategoriesChart";
-import TopCategoriesSummary from "@/app/_components/TopCategoriesSummary";
+import SpendingOverviewChart from "@/app/_components/budget/SpendingOverviewChart";
+import SpendingOverviewSummary from "@/app/_components/budget/SpendingOverviewSummary";
+import TopCategoriesChart from "@/app/_components/budget/TopCategoriesChart";
+import TopCategoriesSummary from "@/app/_components/budget/TopCategoriesSummary";
 import {
   getLastThreeMonthsSummary,
   getTopSpendingCategoriesByMonth,
-} from "@/app/_services/data-service";
+} from "@/app/_services/budget.data-service";
 
 export const metadata = {
-  title: "History"
+  title: "History",
 };
 
 export default async function Page() {

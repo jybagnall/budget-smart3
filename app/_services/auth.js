@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import { createUser, getUser } from "./data-service";
+import { createUser, getUser } from "./user.data-service";
 
 const authConfig = {
   providers: [
@@ -38,7 +38,7 @@ const authConfig = {
         return null;
       }
 
-      session.user.user_id = loggedIn_user.id;
+      session.user.user_id = loggedIn_user.google_id;
       return session;
     },
   },

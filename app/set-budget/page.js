@@ -1,9 +1,9 @@
-import SetBudgetForm from "@/app/_components/SetBudgetForm";
+import SetBudgetForm from "@/app/_components/budget/SetBudgetForm";
 
 export default function Page() {
   return (
     <div className="flex justify-center p-4">
-      <div className="flex flex-col items-center justify-center w-full max-w-md min-h-[calc(100vh-100px)]">
+      <div className="flex flex-col items-center justify-start w-full max-w-md pt-10">
         <SetBudgetForm />
       </div>
     </div>

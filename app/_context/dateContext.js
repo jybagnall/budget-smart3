@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 
-import { getTargetMonthAfterLogin } from "@/app/_services/data-service";
+import { getAvailableMonths } from "@/app/_services/date.data-service";
 
 const MonthContext = createContext();
 
@@ -17,7 +17,7 @@ export function MonthProvider({ children }) {
 
   const updateTargetMonth = async () => {
     try {
-      const { status, date } = await getTargetMonthAfterLogin();
+      const { status, date } = await getAvailableMonths();
 
       if (!status || !date) return;
 
@@ -26,7 +26,6 @@ export function MonthProvider({ children }) {
         setTargetYear(date.year);
         setDateId(date.id);
       }
-      // maybe handle 'multiple' status
     } catch (error) {
       console.error("Failed to fetch target month:", error);
     } finally {

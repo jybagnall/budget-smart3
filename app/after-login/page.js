@@ -2,15 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { getTargetMonthAfterLogin } from "@/app/_services/data-service";
-import Spinner from "@/app/_components/Spinner";
+import { getAvailableMonths } from "@/app/_services/date.data-service";
+import Spinner from "@/app/_components/shared/Spinner";
 
 export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
     (async () => {
-      const { status, date } = await getTargetMonthAfterLogin();
+      const { status, date } = await getAvailableMonths();
 
       if (status === "empty") {
         router.replace("/set-budget");

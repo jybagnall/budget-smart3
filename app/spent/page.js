@@ -1,15 +1,12 @@
 import { cookies } from "next/headers";
 
-import OverviewHeader from "@/app/_components/OverviewHeader";
-import OverviewStatList from "@/app/_components/OverviewStatList";
-import ChartContainer from "@/app/_components/ChartContainer";
-import {
-  getAllMonthAndYearInfo,
-  getMonthAndYear,
-  getTotalSumPerCategory,
-} from "@/app/_services/data-service";
-import ChartExplanation from "@/app/_components/ChartExplanation";
-import BiggestPurchase from "@/app/_components/BiggestPurchase";
+import OverviewHeader from "@/app/_components/budget/OverviewHeader";
+import OverviewStatList from "@/app/_components/budget/OverviewStatList";
+import ChartContainer from "@/app/_components/budget/ChartContainer";
+import { getAllMonthAndYearInfo, getMonthAndYear } from "@/app/_services/date.data-service";
+import { getTotalSumPerCategory } from "@/app/_services/budget.data-service";
+import ChartExplanation from "@/app/_components/budget/ChartExplanation";
+import BiggestPurchase from "@/app/_components/budget/BiggestPurchase";
 
 export const metadata = {
   title: "Budgets",
@@ -42,29 +39,27 @@ export default async function Page() {
           />
         </div>
 
-        <div className="space-y-8 py-8 xl:space-y-14">
-          <div>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h2 className="text-lg font-semibold">
-                Expenditure Per Category
-              </h2>
-              <div className="flex flex-wrap sm:flex-nowrap gap-8 mt-6 items-start">
-                <div className="flex-shrink-0 w-60 h-60 sm:w-72 sm:h-72">
-                  <ChartContainer totalSumPerCategory={totalSumPerCategory} />
-                </div>
-                <div className="flex-1">
-                  <ChartExplanation totalSumPerCategory={totalSumPerCategory} />
-                </div>
-              </div>
-            </div>
+        <div className="space-y-6 pb-4 xl:space-y-10 mt-6">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg font-semibold text-blue-600 mb-3">
+              Biggest Purchases
+            </h2>
+            <BiggestPurchase dateId={dateId} />
           </div>
         </div>
 
-        <div className="space-y-6 pb-4 xl:space-y-10">
-          <div>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h2 className="text-lg font-semibold mb-3">Biggest Purchases</h2>
-              <BiggestPurchase dateId={dateId} />
+        <div className="space-y-8 py-8 xl:space-y-14">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg font-semibold text-blue-600">
+              Expenditure Per Category
+            </h2>
+            <div className="flex flex-wrap sm:flex-nowrap gap-8 mt-6 items-start">
+              <div className="flex-shrink-0 w-60 h-60 sm:w-72 sm:h-72">
+                <ChartContainer totalSumPerCategory={totalSumPerCategory} />
+              </div>
+              <div className="flex-1">
+                <ChartExplanation totalSumPerCategory={totalSumPerCategory} />
+              </div>
             </div>
           </div>
         </div>
@@ -72,7 +67,3 @@ export default async function Page() {
     </main>
   );
 }
-// <div></div>
-
-//📅 Current month + buttons to change month
-//💰 Total spent vs. budget (progress bar)

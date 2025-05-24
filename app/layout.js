@@ -1,8 +1,8 @@
 import { Manrope } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "@/app/_styles/globals.css";
-import Header from "./_components/Header";
-import { Providers } from "@/app/_components/Providers";
+import Header from "./_components/app_setting/Header";
+import { Providers } from "@/app/_components/app_setting/Providers";
 
 const manropeSans = Manrope({
   display: "swap",

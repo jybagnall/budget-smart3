@@ -1,6 +1,6 @@
-import { auth, signOut } from "@/app/_services/auth";
-import SignInButton from "@/app/_components/SignInButton";
-import SignOutButton from "@/app/_components/SignOutButton";
+import { auth } from "@/app/_services/auth";
+import SignInButton from "@/app/_components/app_setting/SignInButton";
+import SignOutButton from "@/app/_components/app_setting/SignOutButton";
 
 export const metadata = {
   title: "Login",

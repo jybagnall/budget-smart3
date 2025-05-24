@@ -1,8 +1,8 @@
-import MonthSelectAfterLogin from "@/app/_components/MonthSelectAfterLogin";
-import { getTargetMonthAfterLogin } from "@/app/_services/data-service";
+import MonthSelectAfterLogin from "@/app/_components/app_setting/MonthSelectAfterLogin";
+import { getAvailableMonths } from "@/app/_services/date.data-service";
 
 export default async function Page() {
-  const { dates } = await getTargetMonthAfterLogin();
+  const { dates } = await getAvailableMonths();
 
   return (
     <div>

@@ -2,10 +2,7 @@
 
 import supabase from "./supabase";
 import { auth, signIn, signOut } from "./auth";
-import { redirect } from "next/navigation";
-
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 
 export async function signInAction() {
   await signIn("google", { redirectTo: "/after-login" });
@@ -15,7 +12,7 @@ export async function signOutAction() {
   await signOut({ redirectTo: "/" });
 }
 
-export async function getAuthenticatedUserId() {
+export async function getAuthenticatedSessionId() {
   const session = await auth();
 
   if (!session || !session.user?.user_id) {
@@ -26,7 +23,7 @@ export async function getAuthenticatedUserId() {
 }
 
 export async function createCategory(category_name, dateId) {
-  const user_id = await getAuthenticatedUserId();
+  const user_id = await getAuthenticatedSessionId();
 
   const data = {
     category_name,
@@ -68,12 +65,15 @@ export async function createItem(item_name, spent_amount, dateId, categoryId) {
 }
 
 export async function deleteUserAccount() {
-  const user_id = await getAuthenticatedUserId();
+  const user_id = await getAuthenticatedSessionId();
 
-  const { error } = await supabase.from("users").delete().eq("id", user_id);
+  const { error } = await supabase
+    .from("users")
+    .delete()
+    .eq("google_id", user_id);
 
   if (error) {
-    throw new Error("Failed to delete user account");
+    throw new Error("Failed to delete user account" + error.message);
   }
 }
 
@@ -90,8 +90,6 @@ export async function resetSpendingRecords(dateId) {
   revalidatePath("/spent");
   revalidatePath("/spent/categories");
   revalidatePath("/spent/record-spending");
-
-  redirect("/spent");
 }
 
 export async function deleteCategory(categoryId) {
@@ -122,7 +120,7 @@ export async function deleteCategory(categoryId) {
 }
 
 export async function editCategoryName(categoryName, categoryId) {
-  const user_id = await getAuthenticatedUserId();
+  const user_id = await getAuthenticatedSessionId();
 
   const { error } = await supabase
     .from("categories")
@@ -164,4 +162,21 @@ export async function editItem(itemId, itemName, itemAmount) {
   revalidatePath("/spent");
   revalidatePath("/spent/categories");
   revalidatePath("/spent/record-spending");
+}
+
+export async function deleteThisMonth(dateId) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  const { error } = await supabase.from("dates").delete().eq("id", dateId);
+
+  if (error) {
+    throw new Error("Failed to delete requested month");
+  }
+
+  revalidatePath("/history");
+  revalidatePath("/spent");
+  revalidatePath("/spent/categories");
+  revalidatePath("/spent/record-spending");
+  revalidatePath("/settings");
 }
