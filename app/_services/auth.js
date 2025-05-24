@@ -1,6 +1,11 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { createUser, getUser } from "./user.data-service";
+import {
+  auth as nextAuth,
+  signIn as nextSignIn,
+  signOut as nextSignOut,
+} from "next-auth";
 
 const { AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, NEXTAUTH_SECRET, NEXTAUTH_URL } =
   process.env;
