@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 export async function signInAction() {
   await signIn("google", {
-    redirectTo: `${process.env.NEXTAUTH_URL}/after-login`,
+    redirectTo: "/after-login",
   });
 }
 
