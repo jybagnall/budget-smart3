@@ -16,6 +16,10 @@ const authConfig = {
 
     async signIn({ user }) {
       try {
+        if (!user?.email) {
+          return false;
+        }
+
         const existingUser = await getUser(user.email);
 
         if (!existingUser)
@@ -32,14 +36,16 @@ const authConfig = {
     },
 
     async session({ session }) {
-      const loggedIn_user = await getUser(session.user.email);
+      try {
+        const loggedInUser = await getUser(session.user.email);
+        if (!loggedInUser) return null;
 
-      if (!loggedIn_user) {
+        session.user.user_id = loggedInUser.google_id;
+        return session;
+      } catch (err) {
+        console.error("❌ session callback error:", err);
         return null;
       }
-
-      session.user.user_id = loggedIn_user.google_id;
-      return session;
     },
   },
   pages: {
