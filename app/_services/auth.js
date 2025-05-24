@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import Google from "next-auth/providers/google";
 import { createUser, getUser } from "./user.data-service";
 
 const authConfig = {
