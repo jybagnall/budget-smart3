@@ -13,7 +13,7 @@ import ConfirmationModalMsg from "@/app/_components/shared/ConfirmationModalMsg"
 import { deleteThisMonth } from "@/app/_services/actions";
 
 const deleteStyle =
-  "rounded-md bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition";
+  "rounded-md bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition disabled:opacity-50";
 
 export default function SettingPanel({ dateId, monthName }) {
   const [resetWarningOpen, setResetWarningOpen] = useState(false);
@@ -72,7 +72,6 @@ export default function SettingPanel({ dateId, monthName }) {
 
   return (
     <div className="max-w-2xl mx-auto space-y-12 px-4 py-10 sm:px-6 lg:px-8">
-      {/* Reset Data */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900">
           Reset Spending Data
@@ -86,9 +85,9 @@ export default function SettingPanel({ dateId, monthName }) {
             type="button"
             onClick={() => setResetWarningOpen(true)}
             disabled={isResetting}
-            className="rounded-md bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 transition"
+            className="rounded-md bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 transition disabled:opacity-50"
           >
-            Reset Data
+            {isResetting ? "Resetting..." : "Reset Data"}
           </button>
         </div>
       </div>
@@ -111,14 +110,13 @@ export default function SettingPanel({ dateId, monthName }) {
             disabled={isDeletingMonth}
             className={deleteStyle}
           >
-            Erase {monthName}
+            {isDeletingMonth ? "Erasing..." : `Erase ${monthName}`}
           </button>
         </div>
       </div>
 
       <hr className="border-t border-gray-200" />
 
-      {/* Delete Account */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900">Delete Account</h2>
         <p className="mt-2 text-sm text-gray-600">
@@ -132,7 +130,7 @@ export default function SettingPanel({ dateId, monthName }) {
             disabled={isDeletingAccount}
             className={deleteStyle}
           >
-            Delete Account
+            {isDeletingAccount ? "Deleting account..." : "Delete Account"}
           </button>
         </div>
       </div>
@@ -157,6 +155,12 @@ export default function SettingPanel({ dateId, monthName }) {
           handleSignOut={handleSignOut}
           deleteMsg="YES, DELETE MY ACCOUNT"
         />
+      )}
+
+      {(isDeletingAccount || isResetting || isDeletingMonth) && (
+        <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center">
+          <div className="text-white">Processing...</div>
+        </div>
       )}
     </div>
   );

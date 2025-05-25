@@ -1,9 +1,13 @@
 import { cookies } from "next/headers";
-
+import { Suspense } from "react";
+import SpinnerMini from "../_components/shared/SpinnerMini";
 import OverviewHeader from "@/app/_components/budget/OverviewHeader";
 import OverviewStatList from "@/app/_components/budget/OverviewStatList";
 import ChartContainer from "@/app/_components/budget/ChartContainer";
-import { getAllMonthAndYearInfo, getMonthAndYear } from "@/app/_services/date.data-service";
+import {
+  getAllMonthAndYearInfo,
+  getMonthAndYear,
+} from "@/app/_services/date.data-service";
 import { getTotalSumPerCategory } from "@/app/_services/budget.data-service";
 import ChartExplanation from "@/app/_components/budget/ChartExplanation";
 import BiggestPurchase from "@/app/_components/budget/BiggestPurchase";
@@ -33,10 +37,12 @@ export default async function Page() {
         />
 
         <div className="border-b border-b-gray-900/10 lg:border-t lg:border-t-gray-900/5">
-          <OverviewStatList
-            dateId={dateId}
-            totalSumPerCategory={totalSumPerCategory}
-          />
+          <Suspense fallback={<SpinnerMini />}>
+            <OverviewStatList
+              dateId={dateId}
+              totalSumPerCategory={totalSumPerCategory}
+            />
+          </Suspense>
         </div>
 
         <div className="space-y-6 pb-4 xl:space-y-10 mt-6">
@@ -44,7 +50,9 @@ export default async function Page() {
             <h2 className="text-lg font-semibold text-blue-600 mb-3">
               Biggest Purchases
             </h2>
-            <BiggestPurchase dateId={dateId} />
+            <Suspense fallback={<SpinnerMini />}>
+              <BiggestPurchase dateId={dateId} />
+            </Suspense>
           </div>
         </div>
 
